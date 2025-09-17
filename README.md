@@ -7,11 +7,11 @@
 ```php
     Configure::write('Sentry', [
         'dsn' => 'SENTRY_DSN',
-        'options', [
+        'options' => [
             'environment' => 'SENTRY_ENVIRONMENT',
             'release' => 'SENTRY_RELEASE',
         ],
-        'ignoredExceptions', [
+        'ignoredExceptions' => [
             NotFoundException::class,
             MissingControllerException::class,
             MissingActionException::class,
