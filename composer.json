@@ -1,11 +1,11 @@
 {
-    "name": "friendsofcake2/sentry",
+    "name": "pieceofcake2/sentry",
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "cakephp/cakephp": "^2.10",
         "composer/installers": "*",
+        "pieceofcake2/cakephp": "^2.10",
         "sentry/sentry": "^4.11"
     },
     "config": {
@@ -16,5 +16,8 @@
     },
     "extra": {
         "installer-name": "Sentry"
+    },
+    "require-dev": {
+        "pieceofcake2/app": "^2.1"
     }
 }
