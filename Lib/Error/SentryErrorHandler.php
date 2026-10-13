@@ -1,6 +1,7 @@
 <?php
 
 use Sentry\SentrySdk;
+use function Sentry\init;
 
 App::uses('ErrorHandler', 'Error');
 
@@ -29,24 +30,31 @@ class SentryErrorHandler extends ErrorHandler
 
         // Fetch DSN and other options from Configure
         $dsn = Configure::read('Sentry.dsn');
-        $options = (array) Configure::read('Sentry.options', []);
+        $options = (array)Configure::read('Sentry.options', []);
         // Ensure DSN is passed
         $options['dsn'] = $dsn;
 
         // Initialize Sentry SDK with combined settings
-        \Sentry\init($options);
+        init($options);
 
         // Load ignored exceptions from configuration
-        self::$ignoredExceptions = (array) Configure::read('Sentry.ignoredExceptions', []);
+        self::$ignoredExceptions = (array)Configure::read('Sentry.ignoredExceptions', []);
 
         // Register shutdown handler to catch fatal errors
-        register_shutdown_function([__CLASS__, 'handleShutdown']);
+        register_shutdown_function([self::class, 'handleShutdown']);
 
         self::$initialized = true;
     }
 
     /**
      * Handle PHP runtime errors (warnings, notices, etc.).
+     *
+     * @param int $code Code of error
+     * @param string $description Error description
+     * @param string|null $file File on which error occurred
+     * @param int|null $line Line that triggered the error
+     * @param array|null $context Context
+     * @return bool
      */
     public static function handleError($code, $description, $file = null, $line = null, $context = null): bool
     {
@@ -69,6 +77,9 @@ class SentryErrorHandler extends ErrorHandler
 
     /**
      * Handle uncaught exceptions.
+     *
+     * @param \Throwable $exception The exception to render and report.
+     * @return void
      */
     public static function handleException($exception): void
     {
@@ -100,7 +111,7 @@ class SentryErrorHandler extends ErrorHandler
                 0,
                 $error['type'],
                 $error['file'],
-                $error['line']
+                $error['line'],
             );
             SentrySdk::getCurrentHub()->captureException($exception);
         }
@@ -109,8 +120,7 @@ class SentryErrorHandler extends ErrorHandler
     /**
      * Check if an exception should be ignored.
      *
-     * @param Exception|Throwable $exception
-     *
+     * @param \Throwable $exception The exception to check.
      * @return bool
      */
     protected static function shouldIgnore($exception)
