@@ -61,7 +61,9 @@ class SentryErrorHandlerTest extends CakeTestCase
     private function setInitialized(bool $initialized): void
     {
         $property = new ReflectionProperty(SentryErrorHandler::class, 'initialized');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
         $property->setValue(null, $initialized);
     }
 
