@@ -1,23 +1,30 @@
 {
     "name": "pieceofcake2/sentry",
+    "description": "Sentry error and exception handler for CakePHP 2",
     "type": "cakephp-plugin",
+    "keywords": ["cakephp", "cakephp2", "sentry", "error-handler"],
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "composer/installers": "*",
-        "pieceofcake2/cakephp": "^2.10",
+        "composer/installers": "^1.0 || ^2.0",
+        "pieceofcake2/cakephp": "^2.12",
         "sentry/sentry": "^4.11"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "^5.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^9.6",
+        "pieceofcake2/app": "^2.2",
+        "pieceofcake2/phpstan-cakephp2": "^0.2.1"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "composer/installers": true
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "extra": {
         "installer-name": "Sentry"
-    },
-    "require-dev": {
-        "pieceofcake2/app": "^2.1"
     }
 }
