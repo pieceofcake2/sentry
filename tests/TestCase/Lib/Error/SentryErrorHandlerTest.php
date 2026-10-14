@@ -99,6 +99,18 @@ class SentryErrorHandlerTest extends CakeTestCase
         $this->assertSame('testing', SentrySdk::getCurrentHub()->getClient()->getOptions()->getEnvironment());
     }
 
+    public function testInitWithoutOptions(): void
+    {
+        Configure::write('Sentry', ['dsn' => 'https://public@sentry.example.com/1']);
+        $this->mockHub();
+        $exception = new NotFoundException();
+        $this->hub->expects($this->once())
+            ->method('captureException')
+            ->with($this->identicalTo($exception));
+
+        SentryErrorHandler::handleException($exception);
+    }
+
     public function testHandleException(): void
     {
         $this->mockHub();
@@ -110,6 +122,19 @@ class SentryErrorHandlerTest extends CakeTestCase
         SentryErrorHandler::handleException($exception);
 
         $this->assertSame([$exception], SentryErrorHandlerTestRenderer::$rendered);
+    }
+
+    public function testHandleExceptionWithError(): void
+    {
+        $this->mockHub();
+        $error = new TypeError('Wrong type');
+        $this->hub->expects($this->once())
+            ->method('captureException')
+            ->with($this->identicalTo($error));
+
+        SentryErrorHandler::handleException($error);
+
+        $this->assertSame([$error], SentryErrorHandlerTestRenderer::$rendered);
     }
 
     public function testHandleIgnoredException(): void
