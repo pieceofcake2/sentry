@@ -8,44 +8,32 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/pieceofcake2/sentry/CI.yml?label=CI)](https://github.com/pieceofcake2/sentry/actions/workflows/CI.yml)
 [![Codecov](https://img.shields.io/codecov/c/gh/pieceofcake2/sentry?label=Coverage)](https://codecov.io/gh/pieceofcake2/sentry)
 
+pieceofcake2/sentry reports the errors and uncaught exceptions of a CakePHP 2 application
+to [Sentry](https://sentry.io/). It provides an error handler that extends CakePHP's
+`ErrorHandler`, so errors are still logged and rendered by CakePHP and sent to Sentry as well.
+
+## Requirements
+
+* PHP 8.0+
+* pieceofcake2/cakephp 2.12+
+
 ## Installation
 
 ```
 composer require pieceofcake2/sentry
 ```
 
-## Config
+Then load the plugin and register `SentryErrorHandler` as the error and exception handler.
+See [Installation](docs/README.md#installation) and [Configuration](docs/README.md#configuration).
 
-`Config/core.php`
+## Documentation
 
-```php
-Configure::write('Sentry', [
-    'dsn' => 'SENTRY_DSN',
-    'options' => [
-        'environment' => 'SENTRY_ENVIRONMENT',
-        'release' => 'SENTRY_RELEASE',
-    ],
-    'ignoredExceptions' => [
-        NotFoundException::class,
-        MissingControllerException::class,
-        MissingActionException::class,
-    ]
-]);
-App::uses('SentryErrorHandler', 'Sentry.Lib/Error');
-```
+Documentation: https://pieceofcake2.github.io/sentry/
 
-```php
-Configure::write('Error', [
-    'handler' => 'SentryErrorHandler::handleError',
-    'level' => E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED,
-    'trace' => true,
-]);
-```
+## Contributing
 
-```php
-Configure::write('Exception', [
-    'handler' => 'SentryErrorHandler::handleException',
-    'renderer' => 'ExceptionRenderer',
-    'log' => true,
-]);
-```
+See the [contribution guidelines](https://github.com/pieceofcake2/.github/blob/master/CONTRIBUTING.md).
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
