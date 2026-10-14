@@ -8,13 +8,3 @@ parameters:
         - Lib
     bootstrapFiles:
         - tests/bootstrap.php
-    ignoreErrors:
-        # Core documents ErrorHandler::handleException() as taking
-        # Exception|ParseError, but it is registered with
-        # set_exception_handler() and receives any Throwable at runtime
-        # (see SentryErrorHandlerTest::testHandleExceptionWithError).
-        -
-            identifier: argument.type
-            message: '#^Parameter \#1 \$exception of static method ErrorHandler::handleException\(\) expects Exception\|ParseError, Throwable given\.$#'
-            path: Lib/Error/SentryErrorHandler.php
-            count: 1
