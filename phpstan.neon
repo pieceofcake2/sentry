@@ -1,0 +1,20 @@
+includes:
+    - vendor/pieceofcake2/phpstan-cakephp2/extension.neon
+
+parameters:
+    level: 5
+    phpVersion: 80000
+    paths:
+        - Lib
+    bootstrapFiles:
+        - tests/bootstrap.php
+    ignoreErrors:
+        # Core documents ErrorHandler::handleException() as taking
+        # Exception|ParseError, but it is registered with
+        # set_exception_handler() and receives any Throwable at runtime
+        # (see SentryErrorHandlerTest::testHandleExceptionWithError).
+        -
+            identifier: argument.type
+            message: '#^Parameter \#1 \$exception of static method ErrorHandler::handleException\(\) expects Exception\|ParseError, Throwable given\.$#'
+            path: Lib/Error/SentryErrorHandler.php
+            count: 1

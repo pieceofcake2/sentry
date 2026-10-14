@@ -30,7 +30,7 @@ class SentryErrorHandler extends ErrorHandler
 
         // Fetch DSN and other options from Configure
         $dsn = Configure::read('Sentry.dsn');
-        $options = (array)Configure::read('Sentry.options', []);
+        $options = (array)Configure::read('Sentry.options');
         // Ensure DSN is passed
         $options['dsn'] = $dsn;
 
@@ -38,7 +38,7 @@ class SentryErrorHandler extends ErrorHandler
         init($options);
 
         // Load ignored exceptions from configuration
-        self::$ignoredExceptions = (array)Configure::read('Sentry.ignoredExceptions', []);
+        self::$ignoredExceptions = (array)Configure::read('Sentry.ignoredExceptions');
 
         // Register shutdown handler to catch fatal errors
         register_shutdown_function([self::class, 'handleShutdown']);
