@@ -29,7 +29,7 @@ composer require pieceofcake2/sentry
 | レガシー (`app/Config/`、`app/Plugin/`) | `"app/Plugin/{$name}/": ["type:cakephp-plugin"]` |
 
 プラグインは `config/bootstrap.php` (レガシー構成では `app/Config/bootstrap.php`) で読み込みます。
-すでに `CakePlugin::loadAll()` を使っている場合は必要ありません:
+すでに `CakePlugin::loadAll()` を使っている場合は必要ありません。
 
 ```php
 CakePlugin::load('Sentry');
@@ -99,5 +99,5 @@ Sentry SDK は、最初のエラーまたは例外を処理するときに初期
 
 ## 由来
 
-このパッケージは [pieceofcake2](https://github.com/pieceofcake2) が作成し、メンテナンスしています。他のプロジェクトのフォークではなく、
-他のプロジェクトを元にしたものでもありません。
+このパッケージは [pieceofcake2](https://github.com/pieceofcake2) が作成し、メンテナンスしています。
+他のプロジェクトのフォークではなく、他のプロジェクトをもとにしたものでもありません。
