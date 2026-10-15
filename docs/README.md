@@ -13,7 +13,7 @@ exceptions are still logged and rendered by CakePHP, and are sent to Sentry as w
 
 Install the plugin with [Composer](https://getcomposer.org/):
 
-```
+```bash
 composer require pieceofcake2/sentry
 ```
 

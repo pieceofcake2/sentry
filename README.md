@@ -19,7 +19,7 @@ to [Sentry](https://sentry.io/). It provides an error handler that extends CakeP
 
 ## Installation
 
-```
+```bash
 composer require pieceofcake2/sentry
 ```
 
