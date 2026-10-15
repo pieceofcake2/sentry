@@ -13,7 +13,7 @@ CakePHP の `ErrorHandler` を継承した `SentryErrorHandler` を提供しま�
 
 ## インストール
 
-[Composer](https://getcomposer.org/) でプラグインをインストールします:
+[Composer](https://getcomposer.org/) でプラグインをインストールします。
 
 ```bash
 composer require pieceofcake2/sentry
@@ -21,7 +21,7 @@ composer require pieceofcake2/sentry
 
 このプラグインは `cakephp-plugin` タイプなので、`composer/installers` によってプラグインのディレクトリに
 インストールされます。正しい場所にインストールされるように、アプリケーションの `composer.json` で
-`installer-paths` を設定してください:
+`installer-paths` を設定してください。
 
 | 構成 | `installer-paths` |
 | --- | --- |
@@ -40,7 +40,7 @@ CakePlugin::load('Sentry');
 ## 設定
 
 `config/core.php` (レガシー構成では `app/Config/core.php`) でプラグインを設定し、`SentryErrorHandler` を
-エラーハンドラーと例外ハンドラーとして登録します:
+エラーハンドラーと例外ハンドラーとして登録します。
 
 ```php
 Configure::write('Sentry', [
