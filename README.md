@@ -12,6 +12,13 @@ pieceofcake2/sentry reports the errors and uncaught exceptions of a CakePHP 2 ap
 to [Sentry](https://sentry.io/). It provides an error handler that extends CakePHP's
 `ErrorHandler`, so errors are still logged and rendered by CakePHP and sent to Sentry as well.
 
+## Documentation
+
+- Website: https://pieceofcake2.github.io/sentry/
+- Markdown: [docs/README.md](docs/README.md) (for AI tools and offline reading)
+
+The Markdown documentation is also included in the Composer package, in the plugin's directory: `plugins/Sentry/docs/README.md` (the location depends on your `installer-paths`). Install the package with `--dev` if you only need it for development.
+
 ## Requirements
 
 * PHP 8.0+
@@ -25,10 +32,6 @@ composer require pieceofcake2/sentry
 
 Then load the plugin and register `SentryErrorHandler` as the error and exception handler.
 See [Installation](docs/README.md#installation) and [Configuration](docs/README.md#configuration).
-
-## Documentation
-
-Documentation: https://pieceofcake2.github.io/sentry/
 
 ## Contributing
 
