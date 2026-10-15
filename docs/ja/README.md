@@ -99,5 +99,5 @@ Sentry SDK は、最初のエラーまたは例外を処理するときに初期
 
 ## 由来
 
-このパッケージは [pieceofcake2](https://github.com/pieceofcake2) が作成し、保守しています。他のプロジェクトのフォークではなく、
+このパッケージは [pieceofcake2](https://github.com/pieceofcake2) が作成し、メンテナンスしています。他のプロジェクトのフォークではなく、
 他のプロジェクトを元にしたものでもありません。
