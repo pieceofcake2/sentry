@@ -89,3 +89,8 @@ The Sentry SDK is initialized when the first error or exception is handled.
   Sentry unless they are an instance of one of `Sentry.ignoredExceptions`.
 - **Fatal errors** (`E_ERROR`, `E_PARSE`, `E_CORE_ERROR` and `E_COMPILE_ERROR`) are passed to
   the error handler by CakePHP when the request shuts down, and are reported like other errors.
+
+## Origin
+
+This package was created by [pieceofcake2](https://github.com/pieceofcake2), which also maintains
+it. It is not a fork of another project and is not based on one.
