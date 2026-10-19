@@ -11,6 +11,7 @@
 pieceofcake2/sentry reports the errors and uncaught exceptions of a CakePHP 2 application
 to [Sentry](https://sentry.io/). It provides an error handler that extends CakePHP's
 `ErrorHandler`, so errors are still logged and rendered by CakePHP and sent to Sentry as well.
+It also gives the URL that Content Security Policy violations are reported to in Sentry.
 
 ## Documentation
 

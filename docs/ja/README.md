@@ -7,6 +7,8 @@ CakePHP の `ErrorHandler` を継承した `SentryErrorHandler` を提供しま�
 
 - [インストール](#installation)
 - [設定](#configuration)
+  - [DSN を部分ごとに指定する](#dsn-from-its-parts)
+- [Content Security Policy の違反の報告](#content-security-policy-reports)
 - [報告される内容](#what-is-reported)
 
 <a id="installation"></a>
@@ -78,9 +80,73 @@ CakePHP は `bootstrap.php` を読み込んだ後でハンドラーを登録す�
 
 | キー | 説明 |
 | --- | --- |
-| `Sentry.dsn` | Sentry プロジェクトの DSN。 |
+| `Sentry.dsn` | Sentry プロジェクトの DSN。文字列か、その部分ごとの値 ([DSN を部分ごとに指定する](#dsn-from-its-parts) をご覧ください) です。設定されていないか空の場合は、イベントを送信しません。 |
 | `Sentry.options` | `environment`、`release`、`sample_rate` など、`Sentry\init()` に渡すオプション。`dsn` には `Sentry.dsn` の値が設定されます。 |
 | `Sentry.ignoredExceptions` | Sentry に送信しない例外クラス。サブクラスも無視されます。これらの例外も CakePHP では引き続き処理されます。 |
+
+<a id="dsn-from-its-parts"></a>
+
+### DSN を部分ごとに指定する
+
+`Sentry.dsn` には、DSN の文字列の代わりに、その部分ごとの値を指定できます。DSN は
+`https://{publicKey}@{host}/{projectId}` の形なので、それぞれを別の環境変数から読み込めます。
+
+```php
+Configure::write('Sentry', [
+    'dsn' => [
+        'publicKey' => env('SENTRY_KEY'),
+        'host' => env('SENTRY_HOST'),
+        'projectId' => env('SENTRY_PROJECT_ID'),
+    ],
+    'options' => [
+        'environment' => env('SENTRY_ENVIRONMENT'),
+        'release' => env('SENTRY_RELEASE'),
+    ],
+]);
+```
+
+| 部分 | 説明 |
+| --- | --- |
+| `publicKey` | プロジェクトのクライアントキーの公開鍵 (`abc123...` など)。 |
+| `host` | イベントを受け付けるホスト (`o123456.ingest.us.sentry.io` など)。ポートを含めることもできます (`sentry.example.com:9000`)。 |
+| `projectId` | プロジェクトの ID (`4501234567890123` など)。 |
+| `scheme` | 省略できます。`https` (デフォルト) か `http`。 |
+
+`publicKey`、`host`、`projectId` のいずれかが空か設定されていない場合 (開発環境で環境変数を設定していない場合など) は、
+Sentry は設定されていないものとして扱われ、イベントを送信しません。不明な部分、文字列でない部分、`@`、`/`、`?`、`#` を
+含む部分を指定すると `InvalidArgumentException` が発生します。
+
+公開鍵は秘密の値ではありません。プロジェクトにイベントを送信できるだけで、ブラウザーで DSN を使う場合や
+[Content Security Policy の報告先の URL](#content-security-policy-reports) に使う場合は、どのみちすべてのブラウザーに渡ります。
+シークレットの保管場所ではなく、設定に書いてかまいません。
+
+<a id="content-security-policy-reports"></a>
+
+## Content Security Policy の違反の報告
+
+Sentry は、[Content Security Policy](https://docs.sentry.io/security-legal-pii/security/security-policy-reporting/) の違反を
+プロジェクトのセキュリティのエンドポイントで集められます。`SentryConfig::cspReportUri()` は、設定された DSN の
+このエンドポイントの URL を返します。
+
+```
+https://o123456.ingest.us.sentry.io/api/4501234567890123/security/?sentry_key=abc123&sentry_environment=production&sentry_release=1.2.3
+```
+
+`sentry_environment` と `sentry_release` は `Sentry.options.environment` と `Sentry.options.release` から付け、
+空の場合は付けません。Sentry が設定されていない場合、`SentryConfig::cspReportUri()` は `null` を返します。
+`SentryConfig::dsn()` は、設定された DSN を `Sentry\Dsn` として返します (設定されていない場合は `null`)。
+
+たとえば [pieceofcake2/security-headers](https://github.com/pieceofcake2/security-headers) では、プラグインを読み込んだ後で
+`config/bootstrap.php` に報告先の URL を設定します (`Sentry` は、`bootstrap.php` より前に読み込まれる `config/core.php` で設定します)。
+
+```php
+App::uses('SentryConfig', 'Sentry.Lib');
+
+Configure::write('SecurityHeaders', [
+    // ...
+    'reportUri' => SentryConfig::cspReportUri() ?? false,
+]);
+```
 
 <a id="what-is-reported"></a>
 
