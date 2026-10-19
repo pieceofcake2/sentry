@@ -5,6 +5,7 @@ parameters:
     level: 5
     phpVersion: 80000
     paths:
-        - Lib
+        - Config
+        - src
     bootstrapFiles:
         - tests/bootstrap.php

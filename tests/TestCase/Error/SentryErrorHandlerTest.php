@@ -1,9 +1,8 @@
 <?php
 
+use PieceOfCake2\Sentry\Error\SentryErrorHandler;
 use Sentry\SentrySdk;
 use Sentry\State\HubInterface;
-
-App::uses('SentryErrorHandler', 'Sentry.Lib/Error');
 
 class SentryErrorHandlerTestRenderer
 {
@@ -21,6 +20,10 @@ class SentryErrorHandlerTestRenderer
 
 class SentryErrorHandlerTest extends CakeTestCase
 {
+    private const DSN = 'https://public@sentry.example.com/1';
+
+    private const MESSAGE = 'Something happened';
+
     private HubInterface $originalHub;
 
     /**
@@ -35,7 +38,7 @@ class SentryErrorHandlerTest extends CakeTestCase
         $this->setInitialized(false);
 
         Configure::write('Sentry', [
-            'dsn' => 'https://public@sentry.example.com/1',
+            'dsn' => self::DSN,
             'options' => [
                 'environment' => 'testing',
                 'release' => '1.2.3',
@@ -43,7 +46,7 @@ class SentryErrorHandlerTest extends CakeTestCase
             'ignoredExceptions' => [NotFoundException::class],
         ]);
         Configure::write('Exception', [
-            'handler' => 'SentryErrorHandler::handleException',
+            'handler' => [SentryErrorHandler::class, 'handleException'],
             'renderer' => 'SentryErrorHandlerTestRenderer',
             'log' => false,
         ]);
@@ -82,9 +85,36 @@ class SentryErrorHandlerTest extends CakeTestCase
         SentryErrorHandler::init();
 
         $options = SentrySdk::getCurrentHub()->getClient()->getOptions();
-        $this->assertSame('https://public@sentry.example.com/1', (string)$options->getDsn());
+        $this->assertSame(self::DSN, (string)$options->getDsn());
         $this->assertSame('testing', $options->getEnvironment());
         $this->assertSame('1.2.3', $options->getRelease());
+    }
+
+    public function testInitWithDsnParts(): void
+    {
+        Configure::write('Sentry.dsn', [
+            'publicKey' => 'public',
+            'host' => 'sentry.example.com',
+            'projectId' => '1',
+        ]);
+
+        SentryErrorHandler::init();
+
+        $options = SentrySdk::getCurrentHub()->getClient()->getOptions();
+        $this->assertSame(self::DSN, (string)$options->getDsn());
+    }
+
+    public function testInitWithoutDsn(): void
+    {
+        Configure::write('Sentry.dsn', [
+            'publicKey' => '',
+            'host' => 'sentry.example.com',
+            'projectId' => '1',
+        ]);
+
+        SentryErrorHandler::init();
+
+        $this->assertNull(SentrySdk::getCurrentHub()->getClient()->getOptions()->getDsn());
     }
 
     public function testInitOnlyOnce(): void
@@ -101,7 +131,7 @@ class SentryErrorHandlerTest extends CakeTestCase
 
     public function testInitWithoutOptions(): void
     {
-        Configure::write('Sentry', ['dsn' => 'https://public@sentry.example.com/1']);
+        Configure::write('Sentry', ['dsn' => self::DSN]);
         $this->mockHub();
         $exception = new NotFoundException();
         $this->hub->expects($this->once())
@@ -164,13 +194,13 @@ class SentryErrorHandlerTest extends CakeTestCase
             ->method('captureException')
             ->with($this->callback(function ($exception) {
                 return $exception instanceof ErrorException
-                    && $exception->getMessage() === 'Something happened'
+                    && $exception->getMessage() === self::MESSAGE
                     && $exception->getSeverity() === E_USER_WARNING
                     && $exception->getFile() === __FILE__
                     && $exception->getLine() === 123;
             }));
 
-        $this->assertTrue(SentryErrorHandler::handleError(E_USER_WARNING, 'Something happened', __FILE__, 123));
+        $this->assertTrue(SentryErrorHandler::handleError(E_USER_WARNING, self::MESSAGE, __FILE__, 123));
     }
 
     public function testHandleErrorDelegatesToCakePhp(): void
@@ -183,13 +213,13 @@ class SentryErrorHandlerTest extends CakeTestCase
 
         ob_start();
         try {
-            SentryErrorHandler::handleError(E_USER_NOTICE, 'Something happened', __FILE__, 123);
+            SentryErrorHandler::handleError(E_USER_NOTICE, self::MESSAGE, __FILE__, 123);
         } finally {
             $output = ob_get_clean();
             Debugger::outputAs($format);
         }
 
-        $this->assertStringContainsString('Something happened', $output);
+        $this->assertStringContainsString(self::MESSAGE, $output);
     }
 
     public function testHandleErrorNotReportedWhenSuppressed(): void
