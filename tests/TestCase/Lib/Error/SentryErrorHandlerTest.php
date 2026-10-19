@@ -87,6 +87,33 @@ class SentryErrorHandlerTest extends CakeTestCase
         $this->assertSame('1.2.3', $options->getRelease());
     }
 
+    public function testInitWithDsnParts(): void
+    {
+        Configure::write('Sentry.dsn', [
+            'publicKey' => 'public',
+            'host' => 'sentry.example.com',
+            'projectId' => '1',
+        ]);
+
+        SentryErrorHandler::init();
+
+        $options = SentrySdk::getCurrentHub()->getClient()->getOptions();
+        $this->assertSame('https://public@sentry.example.com/1', (string)$options->getDsn());
+    }
+
+    public function testInitWithoutDsn(): void
+    {
+        Configure::write('Sentry.dsn', [
+            'publicKey' => '',
+            'host' => 'sentry.example.com',
+            'projectId' => '1',
+        ]);
+
+        SentryErrorHandler::init();
+
+        $this->assertNull(SentrySdk::getCurrentHub()->getClient()->getOptions()->getDsn());
+    }
+
     public function testInitOnlyOnce(): void
     {
         SentryErrorHandler::init();

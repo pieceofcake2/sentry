@@ -4,6 +4,7 @@ use Sentry\SentrySdk;
 use function Sentry\init;
 
 App::uses('ErrorHandler', 'Error');
+App::uses('SentryConfig', 'Sentry.Lib');
 
 class SentryErrorHandler extends ErrorHandler
 {
@@ -28,11 +29,10 @@ class SentryErrorHandler extends ErrorHandler
             return;
         }
 
-        // Fetch DSN and other options from Configure
-        $dsn = Configure::read('Sentry.dsn');
+        // Fetch DSN (a string or its parts) and other options from Configure
         $options = (array)Configure::read('Sentry.options');
-        // Ensure DSN is passed
-        $options['dsn'] = $dsn;
+        // Ensure DSN is passed (null disables sending events)
+        $options['dsn'] = SentryConfig::dsn();
 
         // Initialize Sentry SDK with combined settings
         init($options);
