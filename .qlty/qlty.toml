@@ -65,6 +65,13 @@ match.rules = ["radarlint-php:php:S1448"]
 match.file_patterns = ["tests/**"]
 set.ignored = true
 
+# The tests reset the private state of the error handler with reflection
+[[triage]]
+match.plugins = ["radarlint-php"]
+match.rules = ["radarlint-php:php:S3011"]
+match.file_patterns = ["tests/**"]
+set.ignored = true
+
 # The test bootstrap and the configuration files load CakePHP 2 files with require_once
 [[triage]]
 match.plugins = ["radarlint-php"]
