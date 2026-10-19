@@ -1,5 +1,9 @@
 <?php
 
+namespace PieceOfCake2\Sentry;
+
+use Configure;
+use InvalidArgumentException;
 use Sentry\Dsn;
 
 /**

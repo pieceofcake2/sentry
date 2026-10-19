@@ -1,10 +1,13 @@
 <?php
 
+namespace PieceOfCake2\Sentry\Error;
+
+use Configure;
+use ErrorException;
+use ErrorHandler;
+use PieceOfCake2\Sentry\SentryConfig;
 use Sentry\SentrySdk;
 use function Sentry\init;
-
-App::uses('ErrorHandler', 'Error');
-App::uses('SentryConfig', 'Sentry.Lib');
 
 class SentryErrorHandler extends ErrorHandler
 {

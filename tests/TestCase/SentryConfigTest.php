@@ -1,9 +1,13 @@
 <?php
 
-App::uses('SentryConfig', 'Sentry.Lib');
+use PieceOfCake2\Sentry\SentryConfig;
 
 class SentryConfigTest extends CakeTestCase
 {
+    private const DSN = 'https://abc123@o1.ingest.us.sentry.io/456';
+
+    private const RELEASE = '1.2.3';
+
     public function tearDown(): void
     {
         Configure::delete('Sentry');
@@ -12,11 +16,11 @@ class SentryConfigTest extends CakeTestCase
 
     public function testDsnFromString(): void
     {
-        Configure::write('Sentry.dsn', 'https://abc123@o1.ingest.us.sentry.io/456');
+        Configure::write('Sentry.dsn', self::DSN);
 
         $dsn = SentryConfig::dsn();
 
-        $this->assertSame('https://abc123@o1.ingest.us.sentry.io/456', (string)$dsn);
+        $this->assertSame(self::DSN, (string)$dsn);
         $this->assertSame('abc123', $dsn->getPublicKey());
         $this->assertSame('o1.ingest.us.sentry.io', $dsn->getHost());
         $this->assertSame('456', $dsn->getProjectId());
@@ -30,7 +34,7 @@ class SentryConfigTest extends CakeTestCase
             'projectId' => '456',
         ]);
 
-        $this->assertSame('https://abc123@o1.ingest.us.sentry.io/456', (string)SentryConfig::dsn());
+        $this->assertSame(self::DSN, (string)SentryConfig::dsn());
     }
 
     public function testDsnFromPartsWithSchemePortAndIntegerProjectId(): void
@@ -72,7 +76,7 @@ class SentryConfigTest extends CakeTestCase
     public function testNotConfigured($dsn): void
     {
         Configure::write('Sentry.dsn', $dsn);
-        Configure::write('Sentry.options', ['environment' => 'production', 'release' => '1.2.3']);
+        Configure::write('Sentry.options', ['environment' => 'production', 'release' => self::RELEASE]);
 
         $this->assertNull(SentryConfig::dsn());
         $this->assertNull(SentryConfig::cspReportUri());
@@ -118,7 +122,7 @@ class SentryConfigTest extends CakeTestCase
     {
         Configure::write('Sentry', [
             'dsn' => ['publicKey' => 'abc123', 'host' => 'o1.ingest.us.sentry.io', 'projectId' => '456'],
-            'options' => ['environment' => 'production', 'release' => '1.2.3'],
+            'options' => ['environment' => 'production', 'release' => self::RELEASE],
         ]);
 
         $this->assertSame(
@@ -130,7 +134,7 @@ class SentryConfigTest extends CakeTestCase
     public function testCspReportUriEncodesEnvironmentAndRelease(): void
     {
         Configure::write('Sentry', [
-            'dsn' => 'https://abc123@o1.ingest.us.sentry.io/456',
+            'dsn' => self::DSN,
             'options' => ['environment' => 'staging 2', 'release' => 'app@1.2.3+abc'],
         ]);
 
@@ -151,7 +155,7 @@ class SentryConfigTest extends CakeTestCase
             'no options' => [[], $base],
             'empty options' => [['environment' => '', 'release' => null], $base],
             'environment only' => [['environment' => 'production'], $base . '&sentry_environment=production'],
-            'release only' => [['release' => '1.2.3'], $base . '&sentry_release=1.2.3'],
+            'release only' => [['release' => self::RELEASE], $base . '&sentry_release=1.2.3'],
         ];
     }
 
@@ -163,7 +167,7 @@ class SentryConfigTest extends CakeTestCase
     public function testCspReportUriOmitsEmptyOptions(array $options, string $expected): void
     {
         Configure::write('Sentry', [
-            'dsn' => 'https://abc123@o1.ingest.us.sentry.io/456',
+            'dsn' => self::DSN,
             'options' => $options,
         ]);
 
