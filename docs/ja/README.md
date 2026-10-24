@@ -185,8 +185,9 @@ Configure::write('Exception', ['handler' => [SentryErrorHandler::class, 'handleE
 ```
 
 すぐに書き換えられない場合は、プラグインの bootstrap を読み込みます。`SentryErrorHandler` を新しいクラスの別名として定義します。
-`App::uses('SentryErrorHandler', 'Sentry.Lib/Error')` は削除してください。残っていても、ハンドラーが呼ばれる前に別名が定義されていれば
-問題ありません (CakePHP は `bootstrap.php` を読み込んだ後でハンドラーを登録します)。新しいアプリケーションでは必要ありません。
+`App::uses('SentryErrorHandler', 'Sentry.Lib/Error')` は削除してください (pieceofcake2/cakephp 2.13 で非推奨です)。残っていても、
+ハンドラーが呼ばれる前に別名が定義されていればハンドラーは動きます (CakePHP は `bootstrap.php` を読み込んだ後でハンドラーを登録します)。
+新しいアプリケーションでは必要ありません。
 
 ```php
 CakePlugin::load('Sentry', ['bootstrap' => true]);
