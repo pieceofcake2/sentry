@@ -183,9 +183,10 @@ Configure::write('Exception', ['handler' => [SentryErrorHandler::class, 'handleE
 ```
 
 If you cannot change it yet, load the bootstrap of the plugin, which defines `SentryErrorHandler` as
-an alias of the new class. Remove `App::uses('SentryErrorHandler', 'Sentry.Lib/Error')`, or it is
-harmless as long as the alias is defined before the handler is called (CakePHP registers the
-handlers after `bootstrap.php` has been loaded). New applications do not need this:
+an alias of the new class. Remove `App::uses('SentryErrorHandler', 'Sentry.Lib/Error')`: it is
+deprecated in pieceofcake2/cakephp 2.13. If it is left, the handler still works as long as the alias
+is defined before the handler is called (CakePHP registers the handlers after `bootstrap.php` has
+been loaded). New applications do not need this:
 
 ```php
 CakePlugin::load('Sentry', ['bootstrap' => true]);
